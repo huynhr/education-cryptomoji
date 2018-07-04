@@ -3,6 +3,9 @@
 const secp256k1 = require('secp256k1');
 const { randomBytes, createHash } = require('crypto');
 
+const toBytes = hex => Buffer.from(hex, 'hex');
+const toHex = bytes => bytes.toString('hex');
+const sha256 = msg => createHash('sha256').update(msg).digest();
 
 /**
  * A function which generates a new random Secp256k1 private key, returning
@@ -15,7 +18,8 @@ const { randomBytes, createHash } = require('crypto');
  */
 const createPrivateKey = () => {
   // Enter your solution here
-
+  const buffer = Buffer.from(randomBytes(32));
+  return toHex(buffer);
 };
 
 /**
@@ -33,7 +37,9 @@ const createPrivateKey = () => {
  */
 const getPublicKey = privateKey => {
   // Your code here
+  const publicKeyBuffer = secp256k1.publicKeyCreate(toBytes(privateKey));
 
+  return toHex(publicKeyBuffer);
 };
 
 /**
@@ -51,6 +57,10 @@ const getPublicKey = privateKey => {
  */
 const sign = (privateKey, message) => {
   // Your code here
+  const hash = sha256(message);
+  const bufferSignature = secp256k1.sign(toBytes(hash), toBytes(privateKey));
+
+  return toHex(bufferSignature.signature);
 
 };
 
