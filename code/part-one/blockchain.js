@@ -1,8 +1,6 @@
-'use strict';
-
 const { createHash } = require('crypto');
 const signing = require('./signing');
-
+const { toBytes, toHex, sha256, bufferFrom } = require('./services.js');
 
 /**
  * A simple signed Transaction class for sending funds from the signer to
@@ -48,7 +46,9 @@ class Block {
    */
   constructor(transactions, previousHash) {
     // Your code here
-
+    this.transactions = transactions,
+    this.previousHash = previousHash,
+    this.nonce = 48392075392090
   }
 
   /**
@@ -62,7 +62,11 @@ class Block {
    */
   calculateHash(nonce) {
     // Your code here
-
+    this.nonce = nonce;
+    const sumOfTransactions = this.transactions.reduce((transactions, transaction) => {
+      return transactions += transaction;
+    });
+    this.hash = toHex(sha256(sumOfTransactions + this.previousHash + this.nonce));
   }
 }
 
