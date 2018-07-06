@@ -86,7 +86,7 @@ class Blockchain {
    */
   constructor() {
     // Your code here
-
+    this.blocks = [new Block([], null)]
   }
 
   /**
@@ -94,7 +94,8 @@ class Blockchain {
    */
   getHeadBlock() {
     // Your code here
-
+    const blocks = this.blocks
+    return blocks[blocks.length - 1];
   }
 
   /**
@@ -103,7 +104,13 @@ class Blockchain {
    */
   addBlock(transactions) {
     // Your code here
+    const previousHash = this.getHeadBlock().hash;
 
+    const newBlock = new Block(transactions, previousHash);
+
+    newBlock.calculateHash(0);
+
+    this.blocks.push(newBlock);
   }
 
   /**
@@ -117,7 +124,26 @@ class Blockchain {
    */
   getBalance(publicKey) {
     // Your code here
-
+    let result = 0;
+    let isValid = false;
+    // iterate through each block in the Blockchain
+    this.blocks.forEach(block => {
+      if (isValid) {
+        return;
+      }
+      block.transactions.forEach(transaction => {
+        if (isValid) {
+          return;
+        }
+        const message = transaction.source + transaction.recipient + transaction.amount;
+        isValid = signing.verify(transaction.source, message, transaction.signature);
+        if (isValid) {
+          result = transaction.amount;
+          // return transaction.amount;
+        }
+      })
+    });
+    return result;
   }
 }
 

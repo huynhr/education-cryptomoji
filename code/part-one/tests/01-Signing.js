@@ -1,5 +1,3 @@
-'use strict';
-
 const { expect } = require('chai');
 const secp256k1 = require('secp256k1');
 const { randomBytes, createHash } = require('crypto');
