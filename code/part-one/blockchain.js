@@ -46,9 +46,9 @@ class Block {
    */
   constructor(transactions, previousHash) {
     // Your code here
-    this.transactions = transactions,
-    this.previousHash = previousHash,
-    this.nonce = 48392075392090
+    this.transactions = transactions;
+    this.previousHash = previousHash;
+    this.calculateHash(0);
   }
 
   /**
@@ -62,11 +62,11 @@ class Block {
    */
   calculateHash(nonce) {
     // Your code here
+    const transactionString = this.transactions.map(t => t.signature).join('');
+    const toHash = this.previousHash + transactionString + nonce;
+
     this.nonce = nonce;
-    const sumOfTransactions = this.transactions.reduce((transactions, transaction) => {
-      return transactions += transaction;
-    });
-    this.hash = toHex(sha256(sumOfTransactions + this.previousHash + this.nonce));
+    this.hash = createHash('sha512').update(toHash).digest('hex');
   }
 }
 
@@ -86,7 +86,7 @@ class Blockchain {
    */
   constructor() {
     // Your code here
-    this.blocks = [new Block([], null)]
+    this.blocks = [new Block([], null)];
   }
 
   /**
@@ -105,11 +105,7 @@ class Blockchain {
   addBlock(transactions) {
     // Your code here
     const previousHash = this.getHeadBlock().hash;
-
     const newBlock = new Block(transactions, previousHash);
-
-    newBlock.calculateHash(0);
-
     this.blocks.push(newBlock);
   }
 
@@ -124,26 +120,23 @@ class Blockchain {
    */
   getBalance(publicKey) {
     // Your code here
-    let result = 0;
-    let isValid = false;
-    // iterate through each block in the Blockchain
-    this.blocks.forEach(block => {
-      if (isValid) {
-        return;
-      }
-      block.transactions.forEach(transaction => {
-        if (isValid) {
-          return;
+    // job is to get the balance
+    // iterate through the block chain
+    return this.blocks.reduce((blockBalance, block) => {
+      // for each block iterate look through the transactions
+      // at each tranasaction:
+      return blockBalance + block.transactions.reduce((transactionBalance, transaction) => {
+        // if the public key is a source then minus the amount
+        if (transaction.source === publicKey) {
+          transactionBalance -= transaction.amount;
         }
-        const message = transaction.source + transaction.recipient + transaction.amount;
-        isValid = signing.verify(transaction.source, message, transaction.signature);
-        if (isValid) {
-          result = transaction.amount;
-          // return transaction.amount;
+        // if the public key is a recipient then add the amount
+        if (transaction.recipient === publicKey) {
+          transactionBalance += transaction.amount;
         }
-      })
-    });
-    return result;
+        return transactionBalance;
+      }, 0);
+    }, 0);
   }
 }
 

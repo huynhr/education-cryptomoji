@@ -141,9 +141,10 @@ describe('Blockchain module', function() {
       const signer = signing.createPrivateKey();
       const recipient = signing.getPublicKey(signing.createPrivateKey());
       const transaction = new Transaction(signer, recipient, 100);
+      // const transaction2 = new Transaction(signing.createPrivateKey(), signing.getPublicKey(signing.createPrivateKey()), 200);
       blockchain.addBlock([transaction]);
+      // blockchain.addBlock([transaction2]);
 
-      console.log('BALANCE: ', blockchain.getBalance(recipient));
       expect(blockchain.getBalance(recipient)).to.equal(100);
       expect(blockchain.getBalance(signing.getPublicKey(signer)))
         .to.equal(-100);
