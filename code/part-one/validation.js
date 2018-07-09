@@ -12,7 +12,16 @@ const signing = require('./signing');
  */
 const isValidTransaction = transaction => {
   // Enter your solution here
+  // OICE
+  // output true or false
+  // input the transaction
+  const { source, amount, recipient, signature } = transaction;
+  const combinedMessage = source + recipient + amount;
 
+  if (amount < 0) {
+    return false;
+  }
+  return signing.verify(source, combinedMessage, signature);
 };
 
 /**
