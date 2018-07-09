@@ -32,6 +32,26 @@ const isValidTransaction = transaction => {
  */
 const isValidBlock = block => {
   // Your code here
+  // OICE
+  // output: true or false if all transactions are valid
+  // input: block and it's transactions
+  // return block.transactions.reduce(isValid, transaction => {
+  // }, false)
+
+  // what is a valid block?
+  // a block without it's hash altered
+  // what is contained in a hash?
+    // previous hash + transactions + nounce
+  const { previousHash, transactions, nonce, hash } = block;
+  const transactionString = transactions.map(t => t.signature).join('');
+  const toHash = previousHash + transactionString + nonce;
+  const checkHash = createHash('sha512').update(toHash).digest('hex');
+
+  if ( checkHash !== hash) {
+   return false;
+  }
+
+  return block.transactions.every(isValidTransaction);
 
 };
 
