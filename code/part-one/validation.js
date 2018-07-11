@@ -67,6 +67,31 @@ const isValidBlock = block => {
  */
 const isValidChain = blockchain => {
   // Your code here
+  let isValid = true;
+
+  const blocks = blockchain.blocks;
+  if (blocks[0].previousHash !== null) {
+    return false;
+  }
+
+  const isValidBlocks = blocks.every(block => isValidBlock(block));
+
+  if (!isValidBlocks) {
+    return false;
+  }
+
+
+  //
+  // const isAnyPreviousHashNull = blocks.slice(1)
+  //   .every(block => block.previousHash === null);
+  //
+  // if (!isAnyPreviousHashNull) {
+  //   console.log('SECOND TEST: ', isAnyPreviousHashNull, 'IS VALID?: ', isValid)
+  //   return IsValid;
+  // }
+
+  return isValid;
+
 
 };
 
