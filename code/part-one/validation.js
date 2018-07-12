@@ -69,29 +69,28 @@ const isValidChain = blockchain => {
   // Your code here
   let isValid = true;
 
+  // Checks if gensis block has been removed or touched
   const blocks = blockchain.blocks;
   if (blocks[0].previousHash !== null) {
     return false;
   }
 
-  const isValidBlocks = blocks.every(block => isValidBlock(block));
-
-  if (!isValidBlocks) {
+  // [hash1, null] ->  -> [hash3, hash2] -> [hash4, hash 3]
+  // has any block besdies gensis with a null of null
+  // each block should have prevBlock equals to the hash if none then return true;
+  const isMissingBlocks = blocks.slice(1).some((block, i) => block.previousHash !== blocks[i].hash);
+  if (isMissingBlocks) {
     return false;
   }
 
 
-  //
-  // const isAnyPreviousHashNull = blocks.slice(1)
-  //   .every(block => block.previousHash === null);
-  //
-  // if (!isAnyPreviousHashNull) {
-  //   console.log('SECOND TEST: ', isAnyPreviousHashNull, 'IS VALID?: ', isValid)
-  //   return IsValid;
-  // }
+  // chceks if all blocks and their transactions are valid
+  const isValidBlocks = blocks.every(block => isValidBlock(block));
+  if (!isValidBlocks) {
+    return false;
+  }
 
   return isValid;
-
 
 };
 
@@ -102,6 +101,9 @@ const isValidChain = blockchain => {
  */
 const breakChain = blockchain => {
   // Your code here
+  // given a blockchain break it and see what happens
+  blockchain.blocks.splice(0, 1);
+  return blockchain;
 
 };
 
